@@ -5,8 +5,7 @@
     "description": "Fixes the Pinterest save button on X.com to properly pin with post reference.",
     "permissions": [
         "activeTab",
-        "webRequest",
-        "webRequestBlocking"
+        "webRequest"
     ],
     "background": {
         "service_worker": "background.js"
