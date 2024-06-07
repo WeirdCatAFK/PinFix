@@ -1,39 +1,25 @@
 //Test version identificator
-console.log("Spongebob");
+console.log("Water");
 
 function find_elements_with_tags_and_attributes(
   element,
   tagName,
   attributeName,
-  attributeValue,
-  wildcard = false
+  attributeValue
 ) {
   let stack = [element];
 
   while (stack.length > 0) {
     let current = stack.pop();
-    if (wildcard === false) {
-      if (
-        current.tagName.toLowerCase() === tagName.toLowerCase() &&
-        current.getAttribute(attributeName) === attributeValue
-      ) {
-        return current;
-      }
+    if (
+      current.tagName.toLowerCase() === tagName.toLowerCase() &&
+      current.getAttribute(attributeName) === attributeValue
+    ) {
+      return current;
+    }
 
-      for (let child of current.children) {
-        stack.push(child);
-      }
-    } else {
-      if (
-        current.tagName.toLowerCase() === tagName.toLowerCase() &&
-        current.getAttribute(attributeName).href.search(attributeValue) !== -1
-      ) {
-        return current;
-      }
-
-      for (let child of current.children) {
-        stack.push(child);
-      }
+    for (let child of current.children) {
+      stack.push(child);
     }
   }
 
@@ -47,23 +33,37 @@ function main() {
     "article[data-testid='tweet']"
   );
   tweetContainer.forEach((tweet) => {
-    tweetUser = find_elements_with_tags_and_attributes(
-      tweet,
-      "div",
-      "data-testid",
-      "User-Name"
-    )
-      .querySelector("div")
-      .querySelector("div")
-      .querySelector("a").href;
-    console.log(tweetUser);
-    tweetUrl = find_elements_with_tags_and_attributes(
-      tweet,
-      "div",
-      "href",
-      new RegExp(`/${tweetUser.replace("https://x.com/", "")}/status/.*`), // create a regex pattern
-      wildcard = true // set wildcard to true
-    );
+    try {
+      tweetUser = find_elements_with_tags_and_attributes(
+        tweet,
+        "div",
+        "data-testid",
+        "User-Name"
+      )
+        .querySelector("div")
+        .querySelector("div")
+        .querySelector("a").href;
+    } catch (error) {
+      tweetUser = null;
+    }
+    try {
+      tweetUrl = find_elements_with_tags_and_attributes(
+        tweet,
+        "div",
+        "data-testid",
+        "User-Name"
+      )
+        .querySelector('div[class="css-175oi2r r-18u37iz r-1wbh5a2 r-1ez5h0i"]')
+        .querySelector('div[class="css-175oi2r r-18u37iz r-1q142lx"]')
+        .querySelector("a").href;
+    } catch (error) {
+      tweetUrl = null;
+    }
+
+    if (tweetUrl !== null && tweetUser !== null) {
+      console.log(tweetUrl);
+      console.log(tweetUser);
+    }
   });
 }
 
