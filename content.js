@@ -22,12 +22,9 @@ function find_elements_with_tags_and_attributes(
       stack.push(child);
     }
   }
-
-  // Return null if no matching element is found
   return null;
 }
 
-// contentScript.js
 function main() {
   const tweetContainer = document.querySelectorAll(
     "article[data-testid='tweet']"
