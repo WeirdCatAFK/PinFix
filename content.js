@@ -1,21 +1,71 @@
 //Test version identificator
-console.log("Well Better than the dialectics");
+console.log("Spongebob");
+
+function find_elements_with_tags_and_attributes(
+  element,
+  tagName,
+  attributeName,
+  attributeValue,
+  wildcard = false
+) {
+  let stack = [element];
+
+  while (stack.length > 0) {
+    let current = stack.pop();
+    if (wildcard === false) {
+      if (
+        current.tagName.toLowerCase() === tagName.toLowerCase() &&
+        current.getAttribute(attributeName) === attributeValue
+      ) {
+        return current;
+      }
+
+      for (let child of current.children) {
+        stack.push(child);
+      }
+    } else {
+      if (
+        current.tagName.toLowerCase() === tagName.toLowerCase() &&
+        current.getAttribute(attributeName).href.search(attributeValue) !== -1
+      ) {
+        return current;
+      }
+
+      for (let child of current.children) {
+        stack.push(child);
+      }
+    }
+  }
+
+  // Return null if no matching element is found
+  return null;
+}
 
 // contentScript.js
-function test() {
-  const tweetText_Container = document.querySelectorAll(
-    "div[data-testid='tweetText']"
+function main() {
+  const tweetContainer = document.querySelectorAll(
+    "article[data-testid='tweet']"
   );
-  const tweetTexts = [];
-
-  tweetText_Container.forEach((aTag) => {
-    tweetTexts.push(aTag.querySelector("span").textContent);
+  tweetContainer.forEach((tweet) => {
+    tweetUser = find_elements_with_tags_and_attributes(
+      tweet,
+      "div",
+      "data-testid",
+      "User-Name"
+    )
+      .querySelector("div")
+      .querySelector("div")
+      .querySelector("a").href;
+    console.log(tweetUser);
+    tweetUrl = find_elements_with_tags_and_attributes(
+      tweet,
+      "div",
+      "href",
+      new RegExp(`/${tweetUser.replace("https://x.com/", "")}/status/.*`), // create a regex pattern
+      wildcard = true // set wildcard to true
+    );
   });
 }
 
-function handleScroll() {
-  test();
-}
-
 // Add event listener to the window object
-window.addEventListener("scroll", handleScroll);
+window.addEventListener("scroll", main);
