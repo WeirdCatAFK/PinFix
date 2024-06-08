@@ -1,6 +1,3 @@
-//Test version identificator
-console.log("Pim from the smiling friends");
-
 function find_elements_with_tags_and_attributes(
   element,
   tagName,
@@ -31,7 +28,8 @@ function main() {
     "article[data-testid='tweet']"
   );
   tweetContainer.forEach((tweet) => {
-    //Get tweet User
+    // Get tweet User
+    let tweetUser;
     try {
       tweetUser = find_elements_with_tags_and_attributes(
         tweet,
@@ -45,7 +43,8 @@ function main() {
     } catch (error) {
       tweetUser = null;
     }
-    //Get tweet Url
+    // Get tweet Url
+    let tweetUrl;
     try {
       tweetUrl = find_elements_with_tags_and_attributes(
         tweet,
@@ -59,11 +58,10 @@ function main() {
     } catch (error) {
       tweetUrl = null;
     }
-    //Get tweet imgs
+    // Get tweet imgs
     let tweetImgs = null;
     try {
       tweetImgs = [];
-
       let tweetImgDivs = find_elements_with_tags_and_attributes(
         tweet,
         "div",
@@ -78,14 +76,23 @@ function main() {
     } catch (error) {
       tweetImgs = null;
     }
+    // Get tweet content
+    let tweetContent;
+    try {
+      tweetContent = find_elements_with_tags_and_attributes(
+        tweet,
+        "div",
+        "data-testid",
+        "tweetText"
+      )[0].querySelector("span").innerText;
+    } catch (error) {
+      tweetContent = null;
+    }
 
-    //Testing
     if (tweetUrl !== null && tweetUser !== null && tweetImgs !== null) {
-      console.log(tweetUrl);
-      console.log(tweetUser);
-      console.log(tweetImgs);
+      let pinDescription = `${tweetContent} \n by ${tweetUser}`;
 
-      //Add a pinterest save button to each image
+      // Add a Pinterest save button to each image
       tweetImgs.forEach((image) => {
         // Remove any existing button
         const existingButton =
@@ -99,11 +106,23 @@ function main() {
 
         const button = document.createElement("button");
         button.classList.add("floating-button");
-        button.innerText = "Save";
-
+        button.innerText = "Pin";
         button.addEventListener("click", () => {
-          alert("Button clicked on image: " + image.src);
-          // Add your desired functionality here
+          // Create the Pinterest save button
+          const pinButton = document.createElement("a");
+          pinButton.setAttribute(
+            "href",
+            `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(
+              tweetUrl
+            )}&media=${encodeURIComponent(
+              image.src
+            )}&description=${encodeURIComponent(pinDescription)}`
+          );
+          pinButton.setAttribute("data-pin-do", "buttonPin");
+          pinButton.setAttribute("data-pin-custom", "true");
+
+          // Append the Pin button
+          container.appendChild(pinButton);
         });
 
         image.parentNode.insertBefore(container, image);
@@ -113,6 +132,8 @@ function main() {
     }
   });
 }
+
+main();
 
 // Add event listener to the window object
 window.addEventListener("scroll", main);

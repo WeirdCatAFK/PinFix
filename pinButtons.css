@@ -1,0 +1,27 @@
+/* styles.css */
+
+/* Style the button */
+.floating-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #c8232c;
+  color: #ffffff; /* white text */
+  border: none;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+  z-index: 1;
+}
+
+/* Hover effect for the button */
+.floating-button:hover {
+  background-color: #990f02;
+}
+
+/* Active effect for the button */
+.floating-button:active {
+  background-color: #d0312d;
+  box-shadow: 0 0 0 2px #d0312d;
+}
