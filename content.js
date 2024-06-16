@@ -1,3 +1,5 @@
+console.log("Active");
+
 function find_elements_with_tags_and_attributes(
   element,
   tagName,
@@ -90,8 +92,6 @@ function main() {
     }
 
     if (tweetUrl !== null && tweetUser !== null && tweetImgs !== null) {
-      let pinDescription = `${tweetContent} \n by ${tweetUser}`;
-
       // Add a Pinterest save button to each image
       tweetImgs.forEach((image) => {
         // Remove any existing button
@@ -109,20 +109,14 @@ function main() {
         button.innerText = "Pin";
         button.addEventListener("click", () => {
           // Create the Pinterest save button
-          const pinButton = document.createElement("a");
-          pinButton.setAttribute(
-            "href",
-            `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(
-              tweetUrl
-            )}&media=${encodeURIComponent(
-              image.src
-            )}&description=${encodeURIComponent(pinDescription)}`
-          );
-          pinButton.setAttribute("data-pin-do", "buttonPin");
-          pinButton.setAttribute("data-pin-custom", "true");
+          const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(
+            tweetUrl
+          )}&media=${encodeURIComponent(
+            image.src
+          )}&description=${encodeURIComponent(tweetUser)}`;
 
-          // Append the Pin button
-          container.appendChild(pinButton);
+          // Open the Pinterest pin creation in a new tab
+          window.open(pinUrl, "_blank");
         });
 
         image.parentNode.insertBefore(container, image);
