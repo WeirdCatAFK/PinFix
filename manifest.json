@@ -1,24 +1,29 @@
 {
   "manifest_version": 3,
-  "name": "PinFix for X",
+  "name": "PinFix",
   "version": "1.0",
   "description": "Fixes the Pinterest save button on X.com to properly pin with post reference.",
   "permissions": [
     "activeTab",
-    "webRequest"
+    "webRequest",
+    "scripting"
   ],
   "content_scripts": [
     {
       "matches": [
         "https://x.com/home/*",
-        "https://x.com/i/bookmarks/*"
+        "https://x.com/i/bookmarks/*",
+        "https://x.com/*"
       ],
       "js": [
-        "content.js"
+        "js/pinit.js",
+        "js/pinit_main.js",
+        "js/content.js"
       ],
       "css": [
         "pinButtons.css"
-      ]
+      ],
+      "run_at": "document_end"
     }
   ],
   "icons": {
