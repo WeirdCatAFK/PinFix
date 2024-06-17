@@ -55,6 +55,21 @@ function main() {
     } catch (error) {
       tweetUser = null;
     }
+    if (tweetUser === null) {
+      try {
+        tweetUser = find_elements_with_tags_and_attributes(
+          tweet,
+          "div",
+          "data-testid",
+          "User-Name"
+        )[1]
+          .querySelector("div")
+          .querySelector("div")
+          .querySelector("a").innerText;
+      } catch (error) {
+        tweetUser = null;
+      }
+    }
     let tweetUrl;
     try {
       tweetUrl = find_elements_with_tags_and_attributes(
@@ -69,6 +84,17 @@ function main() {
     } catch (error) {
       tweetUrl = null;
     }
+    if (tweetUrl === null) {
+      try {
+        tweetUrl = tweet
+          .querySelector(
+            'div[class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu"]'
+          )
+          .querySelector("a").href;
+      } catch (error) {
+        tweetUrl = null;
+      }
+    }
     let tweetImgs = null;
     try {
       tweetImgs = [];
@@ -78,7 +104,6 @@ function main() {
         "data-testid",
         "tweetPhoto"
       );
-
       for (let tweetImgDiv of tweetImgDivs) {
         let imgs = tweetImgDiv.querySelectorAll("img");
         tweetImgs.push(...imgs);
@@ -86,6 +111,7 @@ function main() {
     } catch (error) {
       tweetImgs = null;
     }
+
     let tweetContent;
     try {
       tweetContent = find_elements_with_tags_and_attributes(
