@@ -42,6 +42,6 @@
   "host_permissions": [
     "https://x.com/home/*",
     "https://x.com/i/bookmarks/*",
-    "https://x.com"
+    "https://x.com/"
   ]
 }
