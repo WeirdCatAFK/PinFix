@@ -15,7 +15,7 @@ function processTweet(tweet) {
       'a[class="css-175oi2r r-sdzlij r-1phboty r-rs99b7 r-lrvibr r-19yznuf r-64el8z r-o7ynqc r-6416eg r-1ny4l3l r-1loqt21"]'
     )[1].style.backgroundColor;
   } catch (error) {
-    pageColor = rgb(200, 35, 44);
+    pageColor = "rgb(200, 35, 44)";
   }
   let tweetUser;
   try {
@@ -95,10 +95,10 @@ function processTweet(tweet) {
       button.addEventListener("click", () => {
         //Maybe if one day pinterest fixes it's stuff, the description and title of the tweet would be shown on the pin
         PinUtils.pinOne({
-          url: tweetUrl,
-          title: `by ${tweetUser}`,
-          media: `${image.src}`,
-          description: `${tweetContent} \n by ${tweetUser}`,
+          url: encodeURIComponent(tweetUrl),
+          title: encodeURIComponent(`by ${tweetUser}`),
+          media: encodeURIComponent(`${image.src}`),
+          description: encodeURIComponent(`${tweetContent} \n by ${tweetUser}`),
         });
       });
 
