@@ -13,9 +13,7 @@ function processTweet(tweet) {
   let tweetUser;
   try {
     tweetUser = tweet
-      .querySelectorAll('div[data-testid = "User-Name"]')[0]
-      .querySelector("div")
-      .querySelector("div")
+      .querySelectorAll('div[data-testid="User-Name"]')[0]
       .querySelector("a").innerText;
   } catch (error) {
     tweetUser = null;
@@ -23,38 +21,33 @@ function processTweet(tweet) {
   if (tweetUser === null) {
     try {
       tweetUser = tweet
-        .querySelectorAll('div[data-testid = "User-Name"]')[1]
-        .querySelector("div")
-        .querySelector("div")
+        .querySelectorAll('div[data-testid="User-Name"]')[1]
         .querySelector("a").innerText;
     } catch (error) {
       tweetUser = null;
     }
   }
+
   let tweetUrl;
   try {
     tweetUrl = tweet
-      .querySelectorAll('div[data-testid = "User-Name"]')[0]
-      .querySelector('div[class="css-175oi2r r-18u37iz r-1q142lx"]')
+      .querySelectorAll('div[data-testid="User-Name"]')[0]
       .querySelector("a").href;
   } catch (error) {
     tweetUrl = null;
   }
   if (tweetUrl === null) {
     try {
-      tweetUrl = tweet
-        .querySelector('div[class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu"]')
-        .querySelector("a").href;
+      tweetUrl = tweet.querySelector("div.css-175oi2r a").href;
     } catch (error) {
       tweetUrl = null;
     }
   }
+
   let tweetImgs = null;
   try {
     tweetImgs = [];
-    let tweetImgDivs = tweet.querySelectorAll(
-      'div[data-testid = "tweetPhoto"]'
-    );
+    let tweetImgDivs = tweet.querySelectorAll('div[data-testid="tweetPhoto"]');
     for (let tweetImgDiv of tweetImgDivs) {
       let imgs = tweetImgDiv.querySelectorAll("img");
       tweetImgs.push(...imgs);
@@ -66,7 +59,7 @@ function processTweet(tweet) {
   let tweetContent;
   try {
     tweetContent = tweet
-      .querySelectorAll('div[data-testid = "tweetText"]')[0]
+      .querySelectorAll('div[data-testid="tweetText"]')[0]
       .querySelector("span").innerText;
   } catch (error) {
     tweetContent = null;
@@ -84,23 +77,25 @@ function processTweet(tweet) {
       const button = document.createElement("button");
       button.classList.add("floating-button");
       button.innerText = "Pin";
-      try { //I don't know why sometimes it doesn't work
-        pageColor = document.querySelectorAll(
-          'a[class="css-175oi2r r-sdzlij r-1phboty r-rs99b7 r-lrvibr r-19yznuf r-64el8z r-o7ynqc r-6416eg r-1ny4l3l r-1loqt21"]'
-        )[1].style.backgroundColor;
+
+      try {
+        pageColor =
+          document.querySelectorAll("a.css-175oi2r")[1].style.backgroundColor;
       } catch (error) {
-        console.log(error)
+        console.log(error);
         pageColor = "rgb(200, 35, 44)";
       }
       button.style.backgroundColor = pageColor;
+
       button.addEventListener("click", () => {
-        //Maybe if one day pinterest fixes it's stuff, the description and title of the tweet would be shown on the pin
-        PinUtils.pinOne({
-          url: encodeURIComponent(tweetUrl),
-          title: encodeURIComponent(`by ${tweetUser}`),
-          media: encodeURIComponent(`${image.src}`),
-          description: encodeURIComponent(`${tweetContent} \n by ${tweetUser}`),
-        });
+        const pinData = {
+          url: tweetUrl,
+          media: image.src,
+          description: `${tweetContent} \n by ${tweetUser}`,
+          title: `by ${tweetUser}`,
+        };
+        console.log("Pin Data:", pinData); // Log para depuración
+        PinUtils.pinOne(pinData);
       });
 
       image.parentNode.insertBefore(container, image);
@@ -122,6 +117,7 @@ function main() {
     }
   });
 }
+
 const observer = new IntersectionObserver(
   (entries, observer) => {
     entries.forEach((entry) => {
@@ -142,5 +138,3 @@ document.addEventListener("DOMContentLoaded", function () {
   main();
 });
 window.addEventListener("scroll", main);
-
-window.addEventListener("scroll", function () {});
