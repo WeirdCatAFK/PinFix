@@ -10,13 +10,6 @@ document.head.appendChild(script);
 let pageColor;
 
 function processTweet(tweet) {
-  try {
-    pageColor = document.querySelectorAll(
-      'a[class="css-175oi2r r-sdzlij r-1phboty r-rs99b7 r-lrvibr r-19yznuf r-64el8z r-o7ynqc r-6416eg r-1ny4l3l r-1loqt21"]'
-    )[1].style.backgroundColor;
-  } catch (error) {
-    pageColor = "rgb(200, 35, 44)";
-  }
   let tweetUser;
   try {
     tweetUser = tweet
@@ -91,6 +84,14 @@ function processTweet(tweet) {
       const button = document.createElement("button");
       button.classList.add("floating-button");
       button.innerText = "Pin";
+      try { //I don't know why sometimes it doesn't work
+        pageColor = document.querySelectorAll(
+          'a[class="css-175oi2r r-sdzlij r-1phboty r-rs99b7 r-lrvibr r-19yznuf r-64el8z r-o7ynqc r-6416eg r-1ny4l3l r-1loqt21"]'
+        )[1].style.backgroundColor;
+      } catch (error) {
+        console.log(error)
+        pageColor = "rgb(200, 35, 44)";
+      }
       button.style.backgroundColor = pageColor;
       button.addEventListener("click", () => {
         //Maybe if one day pinterest fixes it's stuff, the description and title of the tweet would be shown on the pin
@@ -141,3 +142,5 @@ document.addEventListener("DOMContentLoaded", function () {
   main();
 });
 window.addEventListener("scroll", main);
+
+window.addEventListener("scroll", function () {});
