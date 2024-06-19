@@ -31,19 +31,22 @@ function processTweet(tweet) {
   let tweetUrl;
   try {
     tweetUrl = tweet
-      .querySelectorAll('div[data-testid="User-Name"]')[0]
+      .querySelectorAll(
+        'div[class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu"]'
+      )[0]
       .querySelector("a").href;
   } catch (error) {
     tweetUrl = null;
   }
   if (tweetUrl === null) {
     try {
-      tweetUrl = tweet.querySelector("div.css-175oi2r a").href;
+      tweetUrl = tweet.querySelector(
+        'div[class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu"]'
+      ).href;
     } catch (error) {
       tweetUrl = null;
     }
   }
-
   let tweetImgs = null;
   try {
     tweetImgs = [];
@@ -90,7 +93,9 @@ function processTweet(tweet) {
       button.addEventListener("click", () => {
         const pinData = {
           url: tweetUrl,
-          media: image.src
+          media: image.src,
+          description: `${tweetContent} \n by ${tweetUser}`,
+          title: `by ${tweetUser}`,
         };
         console.log("Pin Data:", pinData); // Log para depuración
         PinUtils.pinOne(pinData);
