@@ -92,7 +92,6 @@ function processTweet(tweet) {
           url: tweetUrl,
           media: image.src,
           description: `${tweetContent} \n by ${tweetUser}`,
-          title: `by ${tweetUser}`,
         };
         console.log("Pin Data:", pinData); // Log para depuración
         PinUtils.pinOne(pinData);
