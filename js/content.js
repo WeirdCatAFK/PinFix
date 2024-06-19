@@ -90,8 +90,7 @@ function processTweet(tweet) {
       button.addEventListener("click", () => {
         const pinData = {
           url: tweetUrl,
-          media: image.src,
-          description: `${tweetContent} \n by ${tweetUser}`,
+          media: image.src
         };
         console.log("Pin Data:", pinData); // Log para depuración
         PinUtils.pinOne(pinData);
