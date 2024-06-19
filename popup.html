@@ -4,11 +4,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>PinFix</title>
+    <link rel="stylesheet" href="popup.css">
+    <style>
+        html {
+            width: 400px;
+            height: 200px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            margin: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 1.1em;
+        }
+
+        .contact {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .donate-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #0070ba;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .donate-button:hover {
+            background-color: #005b99;
+        }
+    </style>
 </head>
 
 <body>
-    PinFix for X is active
+    <div class="container">
+        <h1>PinFix is Active</h1>
+        <p>Thank you for using PinFix. Your support helps us continue to improve.</p>
+        <a href="https://www.paypal.com/paypalme/dpinedaDev" target="_blank" class="donate-button">Donate with
+            PayPal</a>
+        <div class="contact">
+            <div>Contact: dpineda.dev@gmail.com</div>
+            <div>X (formerly twitter): <a href="https://twitter.com/your_twitter_handle"
+                    target="_blank">@WeirdCat_AFK</a></div>
+        </div>
+    </div>
 </body>
 
 </html>
