@@ -25,3 +25,7 @@ Once the ZIP file is downloaded, extract it to a folder on your computer. This f
 ## Verify Installation
 
 After selecting the folder, the extension should appear on the Extensions page. Ensure the extension is enabled by checking the toggle switch next to it.
+
+
+# If you can't bother installing it this way
+Dont worry I will soon upload it to the chrome webstore
