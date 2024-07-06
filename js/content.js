@@ -1,11 +1,13 @@
 console.log("PinFix is active");
 
-//Load local copy of pinterest js script
+// Load Pinterest script from CDN
 const script = document.createElement("script");
-script.src = chrome.runtime.getURL("js/pinit.js") + "?" + Math.random();
+script.src = "https://assets.pinterest.com/js/pinit.js";
 script.async = true;
 script.defer = true;
 document.head.appendChild(script);
+
+
 
 let pageColor;
 
