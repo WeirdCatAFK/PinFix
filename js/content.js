@@ -1,14 +1,5 @@
 console.log("PinFix is active");
 
-//Load local copy of pinterest js script
-const script = document.createElement("script");
-script.src = chrome.runtime.getURL("js/pinit.js") + "?" + Math.random();
-script.async = true;
-script.defer = true;
-document.head.appendChild(script);
-
-let pageColor;
-
 function processTweet(tweet) {
   let tweetUser;
   try {
@@ -80,15 +71,6 @@ function processTweet(tweet) {
       const button = document.createElement("button");
       button.classList.add("floating-button");
       button.innerText = "Pin";
-
-      try {
-        pageColor =
-          document.querySelectorAll("a.css-175oi2r")[1].style.backgroundColor;
-      } catch (error) {
-        console.log(error);
-        pageColor = "rgb(200, 35, 44)";
-      }
-      button.style.backgroundColor = pageColor;
 
       button.addEventListener("click", () => {
         const pinData = {
