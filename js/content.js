@@ -1,5 +1,18 @@
 console.log("PinFix is active");
 
+function pin(src, description) {
+  const baseUrl = "https://www.pinterest.com/pin/create/button/";
+  const params = new URLSearchParams({
+    url: src,
+    description: description,
+  });
+
+  const pinterestURL = `${baseUrl}?${params.toString()}`;
+
+  window.open(pinterestURL, "_blank", "width=600,height=400");
+}
+
+//Gets most content of the tweet to be handled by the
 function processTweet(tweet) {
   let tweetUser;
   try {
@@ -72,15 +85,15 @@ function processTweet(tweet) {
       button.classList.add("floating-button");
       button.innerText = "Pin";
 
-      button.addEventListener("click", () => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
         const pinData = {
           url: tweetUrl,
           media: image.src,
           description: `${tweetContent} \n by ${tweetUser}`,
           title: `by ${tweetUser}`,
         };
-        console.log("Pin Data:", pinData); // Log para depuración
-        PinUtils.pinOne(pinData);
+        pin(pinData.url, pinData.description);
       });
 
       image.parentNode.insertBefore(container, image);
