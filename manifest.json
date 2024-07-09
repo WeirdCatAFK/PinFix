@@ -12,8 +12,6 @@
         "https://x.com/*"
       ],
       "js": [
-        "js/pinit.js",
-        "js/pinit_main.js",
         "js/content.js"
       ],
       "css": [
