@@ -28,4 +28,4 @@ After selecting the folder, the extension should appear on the Extensions page. 
 
 
 # If you can't bother installing it this way
-Dont worry I will soon upload it to the chrome webstore
+[Just go to the google chrome store and download it from there](https://chromewebstore.google.com/detail/pinfix/mifjdganjoacabfepgbdeocbogmmhccn)
