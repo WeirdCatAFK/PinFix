@@ -11,10 +11,12 @@
   border-radius: 10px;
   z-index: 1;
   font-family: Arial, Helvetica, sans-serif;
+  opacity: 0;
 }
 
 .floating-button:hover {
   background-color: #990f02;
+  opacity: 1;
 }
 
 .floating-button:active {

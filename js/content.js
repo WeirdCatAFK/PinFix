@@ -63,8 +63,6 @@ function processTweet(tweet) {
   } catch (error) {
     tweetImgs = null;
   }
-  console.log(tweetImgs);
-
   let tweetContent;
   try {
     tweetContent = tweet
@@ -100,6 +98,18 @@ function processTweet(tweet) {
       image.parentNode.insertBefore(container, image);
       container.appendChild(image);
       container.appendChild(button);
+
+      image.parentNode.parentNode.addEventListener("mouseover", () => {
+        button.style.opacity = 1
+      });
+      
+      image.parentNode.parentNode.addEventListener("mouseleave", () => {
+        setTimeout(() => {
+          button.style.opacity = 0;
+        }, 265);
+      });
+
+
     });
   }
 }
