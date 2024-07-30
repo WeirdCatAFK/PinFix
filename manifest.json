@@ -10,6 +10,8 @@
         "https://x.com/home/*",
         "https://x.com/i/bookmarks/*",
         "https://x.com/*"
+
+        
       ],
       "js": [
         "js/content.js"

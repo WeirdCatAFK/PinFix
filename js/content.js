@@ -1,9 +1,10 @@
 console.log("PinFix is active");
 
-function pin(src, description) {
+function pin(src, media, description) {
   const baseUrl = "https://www.pinterest.com/pin/create/button/";
   const params = new URLSearchParams({
     url: src,
+    media: media,
     description: description,
   });
 
@@ -62,6 +63,7 @@ function processTweet(tweet) {
   } catch (error) {
     tweetImgs = null;
   }
+  console.log(tweetImgs);
 
   let tweetContent;
   try {
@@ -90,10 +92,9 @@ function processTweet(tweet) {
         const pinData = {
           url: tweetUrl,
           media: image.src,
-          description: `${tweetContent} \n by ${tweetUser}`,
-          title: `by ${tweetUser}`,
+          description: tweetContent,
         };
-        pin(pinData.url, pinData.description);
+        pin(pinData.url, pinData.media, pinData.description);
       });
 
       image.parentNode.insertBefore(container, image);
