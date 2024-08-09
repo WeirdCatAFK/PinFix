@@ -29,3 +29,8 @@ After selecting the folder, the extension should appear on the Extensions page. 
 
 # If you can't bother installing it this way
 [Just go to the google chrome store and download it from there](https://chromewebstore.google.com/detail/pinfix/mifjdganjoacabfepgbdeocbogmmhccn)
+
+
+### P.D.
+
+If you have trouble creating a custom pin button (since pinterest doesn't provide updated documentation) feel free to email me to dpineda.dev@gmail.com
