@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PinFix",
-  "version": "1.0",
+  "version": "1.2",
   "description": "Fixes the Pinterest save button on X.com to properly pin with post reference.",
   "permissions": [],
   "content_scripts": [
