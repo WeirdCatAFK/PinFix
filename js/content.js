@@ -1,89 +1,99 @@
 console.log("PinFix is active");
 
-function pin(src, media, description) {
-  const baseUrl = "https://www.pinterest.com/pin/create/button/";
-  const params = new URLSearchParams({
-    url: src,
-    media: media,
-    description: description,
-  });
-
-  const pinterestURL = `${baseUrl}?${params.toString()}`;
+function pinToPinterest(url, description, media) {
+  const pinterestBaseURL = "https://www.pinterest.com/pin-builder/";
+  const params = new URLSearchParams({ url, description, media });
+  const pinterestURL = `${pinterestBaseURL}?${params.toString()}`;
 
   window.open(pinterestURL, "_blank", "width=600,height=400");
 }
 
-//Gets most content of the tweet to be handled by the
-function processTweet(tweet) {
-  let tweetUser;
+function getTweetUser(tweet) {
   try {
-    tweetUser = tweet
+    return tweet
       .querySelectorAll('div[data-testid="User-Name"]')[0]
       .querySelector("a").innerText;
-  } catch (error) {
-    tweetUser = null;
-  }
-  if (tweetUser === null) {
+  } catch {
     try {
-      tweetUser = tweet
+      return tweet
         .querySelectorAll('div[data-testid="User-Name"]')[1]
         .querySelector("a").innerText;
-    } catch (error) {
-      tweetUser = null;
+    } catch {
+      return null;
     }
   }
+}
 
-  let tweetUrl;
+function getTweetURL(tweet) {
   try {
-    tweetUrl = tweet
+    return tweet
       .querySelectorAll(
         'div[class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu"]'
       )[0]
       .querySelector("a").href;
-  } catch (error) {
-    tweetUrl = null;
-  }
-  if (tweetUrl === null) {
+  } catch {
     try {
-      tweetUrl = tweet.querySelector(
+      return tweet.querySelector(
         'div[class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu"]'
       ).href;
-    } catch (error) {
-      tweetUrl = null;
+    } catch {
+      return null;
     }
   }
-  let tweetImgs = null;
+}
+
+function getTweetImages(tweet) {
   try {
-    tweetImgs = [];
-    let tweetImgDivs = tweet.querySelectorAll('div[data-testid="tweetPhoto"]');
-    for (let tweetImgDiv of tweetImgDivs) {
-      let imgs = tweetImgDiv.querySelectorAll("img");
+    const tweetImgs = [];
+    const tweetImgDivs = tweet.querySelectorAll(
+      'div[data-testid="tweetPhoto"]'
+    );
+    tweetImgDivs.forEach((tweetImgDiv) => {
+      const imgs = tweetImgDiv.querySelectorAll("img");
       tweetImgs.push(...imgs);
-    }
-  } catch (error) {
-    tweetImgs = null;
+    });
+    return tweetImgs;
+  } catch {
+    return null;
   }
-  let tweetContent;
+}
+
+function getTweetContent(tweet) {
   try {
-    tweetContent = tweet
+    return tweet
       .querySelectorAll('div[data-testid="tweetText"]')[0]
       .querySelector("span").innerText;
-  } catch (error) {
-    tweetContent = null;
+  } catch {
+    return null;
   }
+}
 
-  if (tweetUrl !== null && tweetUser !== null && tweetImgs !== null) {
+function processTweet(tweet) {
+  const tweetUser = getTweetUser(tweet);
+  const tweetUrl = getTweetURL(tweet);
+  const tweetImgs = getTweetImages(tweet);
+  let tweetContent = getTweetContent(tweet);
+
+  if (tweetUser && tweetUrl && tweetImgs) {
+    // Handle null tweetContent
+    tweetContent = tweetContent
+      ? `${tweetContent} \n by ${tweetUser}`
+      : `by ${tweetUser}`;
+
     tweetImgs.forEach((image) => {
-      const existingButton = image.parentNode.querySelector(".floating-button");
+      const existingButton =
+        image.parentNode.parentNode.querySelector(".floating-button");
       if (existingButton) {
         existingButton.remove();
       }
+
       const container = document.createElement("div");
       container.classList.add("image-container");
 
       const button = document.createElement("button");
       button.classList.add("floating-button");
       button.innerText = "Pin";
+      button.style.opacity = 0; // Initially hidden
 
       button.addEventListener("click", (event) => {
         event.preventDefault();
@@ -92,34 +102,34 @@ function processTweet(tweet) {
           media: image.src,
           description: tweetContent,
         };
-        pin(pinData.url, pinData.media, pinData.description);
+        pinToPinterest(pinData.url, pinData.description, pinData.media);
       });
 
-      image.parentNode.insertBefore(container, image);
-      container.appendChild(image);
-      container.appendChild(button);
+      const grandparent = image.parentNode.parentNode;
+      grandparent.appendChild(button);
 
-      image.parentNode.parentNode.addEventListener("mouseover", () => {
-        button.style.opacity = 1
+      grandparent.addEventListener("mouseover", () => {
+        button.style.opacity = 1;
       });
-      
-      image.parentNode.parentNode.addEventListener("mouseleave", () => {
+
+      grandparent.addEventListener("mouseleave", () => {
         setTimeout(() => {
           button.style.opacity = 0;
         }, 265);
       });
 
-
+      container.appendChild(image);
+      grandparent.insertBefore(container, button);
     });
   }
 }
 
-function main() {
-  const tweetContainer = document.querySelectorAll(
+function observeTweets() {
+  const tweetElements = document.querySelectorAll(
     "article[data-testid='tweet']"
   );
 
-  tweetContainer.forEach((tweet) => {
+  tweetElements.forEach((tweet) => {
     if (!tweet.classList.contains("processed")) {
       tweet.classList.add("processed");
       observer.observe(tweet);
@@ -143,7 +153,5 @@ const observer = new IntersectionObserver(
   }
 );
 
-document.addEventListener("DOMContentLoaded", function () {
-  main();
-});
-window.addEventListener("scroll", main);
+document.addEventListener("DOMContentLoaded", observeTweets);
+window.addEventListener("scroll", observeTweets);
