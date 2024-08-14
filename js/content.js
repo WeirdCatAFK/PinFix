@@ -1,9 +1,21 @@
-console.log("PinFix is active");
+console.log("PinFix is active multiPinTest");
 
-function pinToPinterest(url, description, media) {
-  const pinterestBaseURL = "https://www.pinterest.com/pin-builder/";
-  const params = new URLSearchParams({ url, description, media });
+function pinFirst(url, description) {
+  const pinterestBaseURL = "https://www.pinterest.com/pin/create/button/";
+  const params = new URLSearchParams({ url, description });
   const pinterestURL = `${pinterestBaseURL}?${params.toString()}`;
+
+  window.open(pinterestURL, "_blank", "width=600,height=400");
+}
+
+function pinNext(url, media, description) {
+  const baseUrl = "https://www.pinterest.com/pin/create/button/";
+  const params = new URLSearchParams({
+    url: url,
+    media: media,
+    description: description,
+  });
+  const pinterestURL = `${baseUrl}?${params.toString()}`;
 
   window.open(pinterestURL, "_blank", "width=600,height=400");
 }
@@ -80,7 +92,7 @@ function processTweet(tweet) {
       ? `${tweetContent} \n by ${tweetUser}`
       : `by ${tweetUser}`;
 
-    tweetImgs.forEach((image) => {
+    tweetImgs.forEach((image, index) => {
       const existingButton =
         image.parentNode.parentNode.querySelector(".floating-button");
       if (existingButton) {
@@ -102,7 +114,11 @@ function processTweet(tweet) {
           media: image.src,
           description: tweetContent,
         };
-        pinToPinterest(pinData.url, pinData.description, pinData.media);
+        if (index === 0) {
+          pinFirst(pinData.url, pinData.description);
+        } else {
+          pinNext(pinData.url, pinData.media, pinData.description);
+        }
       });
 
       const grandparent = image.parentNode.parentNode;
