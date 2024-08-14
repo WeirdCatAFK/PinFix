@@ -1,4 +1,4 @@
-console.log("PinFix is active multiPinTest");
+console.log("PinFix is active");
 
 function pinFirst(url, description) {
   const pinterestBaseURL = "https://www.pinterest.com/pin/create/button/";
