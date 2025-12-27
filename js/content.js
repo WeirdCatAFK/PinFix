@@ -38,35 +38,63 @@ function getTweetUser(tweet) {
 
 function getTweetURL(tweet) {
   try {
+    const timeElement = tweet.querySelector("time");
+    if (timeElement) {
+      const link = timeElement.closest("a");
+      if (link) {
+        return link.href;
+      }
+    }
+    // Fallback to original logic
     return tweet
       .querySelectorAll(
         'div[class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu"]'
       )[0]
       .querySelector("a").href;
   } catch {
-    try {
-      return tweet.querySelector(
-        'div[class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu"]'
-      ).href;
-    } catch {
-      return null;
-    }
+    return null;
   }
 }
 
-function getTweetImages(tweet) {
+// Scans the tweet for media and separates them into 'video' or 'image' types.
+
+function getTweetMedia(tweet) {
   try {
-    const tweetImgs = [];
-    const tweetImgDivs = tweet.querySelectorAll(
+    const mediaItems = [];
+    const tweetPhotoDivs = tweet.querySelectorAll(
       'div[data-testid="tweetPhoto"]'
     );
-    tweetImgDivs.forEach((tweetImgDiv) => {
-      const imgs = tweetImgDiv.querySelectorAll("img");
-      tweetImgs.push(...imgs);
+
+    tweetPhotoDivs.forEach((container) => {
+      const videoPlayer = container.querySelector(
+        'div[data-testid="videoPlayer"]'
+      );
+
+      if (videoPlayer) {
+        const video = videoPlayer.querySelector("video");
+        if (video && video.poster) {
+          mediaItems.push({
+            type: "video",
+            container: container,
+            src: video.poster,
+          });
+        }
+      }
+      // Check for Standard Image  if no video player is found in this container
+      else {
+        const imgs = container.querySelectorAll("img");
+        imgs.forEach((img) => {
+          mediaItems.push({
+            type: "image",
+            element: img, 
+            src: img.src,
+          });
+        });
+      }
     });
-    return tweetImgs;
+    return mediaItems;
   } catch {
-    return null;
+    return [];
   }
 }
 
@@ -83,35 +111,27 @@ function getTweetContent(tweet) {
 function processTweet(tweet) {
   const tweetUser = getTweetUser(tweet);
   const tweetUrl = getTweetURL(tweet);
-  const tweetImgs = getTweetImages(tweet);
+  const mediaItems = getTweetMedia(tweet);
   let tweetContent = getTweetContent(tweet);
 
-  if (tweetUser && tweetUrl && tweetImgs) {
-    // Handle null tweetContent
+  if (tweetUser && tweetUrl && mediaItems && mediaItems.length > 0) {
     tweetContent = tweetContent
       ? `${tweetContent} \n by ${tweetUser}`
       : `by ${tweetUser}`;
 
-    tweetImgs.forEach((image, index) => {
-      const existingButton =
-        image.parentNode.parentNode.querySelector(".floating-button");
-      if (existingButton) {
-        existingButton.remove();
-      }
-
-      const container = document.createElement("div");
-      container.classList.add("image-container");
-
+    mediaItems.forEach((item, index) => {
       const button = document.createElement("button");
       button.classList.add("floating-button");
       button.innerText = "Pin";
-      button.style.opacity = 0; // Initially hidden
+      button.style.opacity = 0;
+      button.style.zIndex = "9999"; // Ik it's silly having this button at 9999, but like I'm not bothering myself by checking
 
       button.addEventListener("click", (event) => {
         event.preventDefault();
+        event.stopPropagation(); // Stop propagation for both types
         const pinData = {
           url: tweetUrl,
-          media: image.src,
+          media: item.src,
           description: tweetContent,
         };
         if (index === 0) {
@@ -121,21 +141,46 @@ function processTweet(tweet) {
         }
       });
 
-      const grandparent = image.parentNode.parentNode;
-      grandparent.appendChild(button);
 
-      grandparent.addEventListener("mouseover", () => {
-        button.style.opacity = 1;
-      });
-
-      grandparent.addEventListener("mouseleave", () => {
-        setTimeout(() => {
+      // Videos and gifs
+      if (item.type === "video") {
+        const container = item.container;
+        if (container.querySelector(".floating-button")) return;
+        container.style.position = "relative";
+        container.appendChild(button);
+        container.addEventListener("mouseenter", () => {
+          button.style.opacity = 1;
+        });
+        container.addEventListener("mouseleave", () => {
           button.style.opacity = 0;
-        }, 265);
-      });
+        });
+      }
 
-      container.appendChild(image);
-      grandparent.insertBefore(container, button);
+      // Original Images
+      else if (item.type === "image") {
+        const image = item.element;
+        const grandparent = image.parentNode.parentNode;
+
+        if (grandparent.querySelector(".floating-button")) return;
+
+        const container = document.createElement("div");
+        container.classList.add("image-container");
+
+        grandparent.appendChild(button);
+
+        grandparent.addEventListener("mouseover", () => {
+          button.style.opacity = 1;
+        });
+
+        grandparent.addEventListener("mouseleave", () => {
+          setTimeout(() => {
+            button.style.opacity = 0;
+          }, 265);
+        });
+        container.appendChild(image);
+
+        grandparent.insertBefore(container, button);
+      }
     });
   }
 }
