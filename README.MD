@@ -33,4 +33,4 @@ After selecting the folder, the extension should appear on the Extensions page. 
 
 ### P.D.
 
-If you have trouble creating a custom pin button (since pinterest doesn't provide updated documentation) feel free to email me to dpineda.dev@gmail.com
+If you have trouble creating a custom pin button feel free to email me to dpineda.dev@gmail.com
