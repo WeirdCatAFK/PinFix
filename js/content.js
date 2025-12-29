@@ -61,39 +61,42 @@ function getTweetURL(tweet) {
 function getTweetMedia(tweet) {
   try {
     const mediaItems = [];
-    const tweetPhotoDivs = tweet.querySelectorAll(
-      'div[data-testid="tweetPhoto"]'
-    );
 
-    tweetPhotoDivs.forEach((container) => {
-      const videoPlayer = container.querySelector(
-        'div[data-testid="videoPlayer"]'
-      );
-
-      if (videoPlayer) {
-        const video = videoPlayer.querySelector("video");
-        if (video && video.poster) {
-          mediaItems.push({
-            type: "video",
-            container: container,
-            src: video.poster,
-          });
-        }
-      }
-      // Check for Standard Image  if no video player is found in this container
-      else {
-        const imgs = container.querySelectorAll("img");
-        imgs.forEach((img) => {
-          mediaItems.push({
-            type: "image",
-            element: img, 
-            src: img.src,
-          });
+    // Search for Videos/GIFs directly (they usually have data-testid="videoPlayer")
+    // This handles response GIFs which might not be in "tweetPhoto"
+    const videoPlayers = tweet.querySelectorAll('div[data-testid="videoPlayer"]');
+    
+    videoPlayers.forEach((player) => {
+      const video = player.querySelector("video");
+      if (video && video.poster) {
+        mediaItems.push({
+          type: "video",
+          container: player, // Use the player itself as the container
+          src: video.poster,
         });
       }
     });
+
+    // Search for Standard Images in "tweetPhoto"
+    const tweetPhotoDivs = tweet.querySelectorAll('div[data-testid="tweetPhoto"]');
+    
+    tweetPhotoDivs.forEach((container) => {
+      // Skip this container if it holds a videoPlayer (already handled above)
+      if (container.querySelector('div[data-testid="videoPlayer"]')) return;
+
+      const imgs = container.querySelectorAll("img");
+      imgs.forEach((img) => {
+        mediaItems.push({
+          type: "image",
+          element: img,
+          src: img.src,
+        });
+      });
+    });
+
     return mediaItems;
-  } catch {
+  } catch (e) {
+    console.error("PinFix Error:", e);
     return [];
   }
 }
