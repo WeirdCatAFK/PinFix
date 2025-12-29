@@ -2,7 +2,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #c8232c;
+  background-color: #E60023;
   color: #ffffff;
   border: none;
   padding: 5px 10px;
@@ -15,11 +15,11 @@
 }
 
 .floating-button:hover {
-  background-color: #990f02;
+  background-color: #AD081B; 
   opacity: 1;
 }
 
 .floating-button:active {
-  background-color: #d0312d;
-  box-shadow: 0 0 0 2px #d0312d;
+  background-color: #E60023;
+  box-shadow: 0 0 0 2px #E60023;
 }
