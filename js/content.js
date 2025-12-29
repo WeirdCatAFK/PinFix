@@ -62,30 +62,34 @@ function getTweetMedia(tweet) {
   try {
     const mediaItems = [];
 
-    // Search for Videos/GIFs directly (they usually have data-testid="videoPlayer")
-    // This handles response GIFs which might not be in "tweetPhoto"
-    const videoPlayers = tweet.querySelectorAll('div[data-testid="videoPlayer"]');
-    
+    // VIDEOS / GIFS
+    const videoPlayers = tweet.querySelectorAll(
+      'div[data-testid="videoPlayer"]'
+    );
+
     videoPlayers.forEach((player) => {
       const video = player.querySelector("video");
       if (video && video.poster) {
         mediaItems.push({
           type: "video",
-          container: player, // Use the player itself as the container
+          container: player, // Attach button to the player container
           src: video.poster,
         });
       }
     });
 
-    // Search for Standard Images in "tweetPhoto"
-    const tweetPhotoDivs = tweet.querySelectorAll('div[data-testid="tweetPhoto"]');
-    
+    // IMAGES
+    const tweetPhotoDivs = tweet.querySelectorAll(
+      'div[data-testid="tweetPhoto"]'
+    );
+
     tweetPhotoDivs.forEach((container) => {
-      // Skip this container if it holds a videoPlayer (already handled above)
       if (container.querySelector('div[data-testid="videoPlayer"]')) return;
 
       const imgs = container.querySelectorAll("img");
       imgs.forEach((img) => {
+        if (img.closest('[data-testid="Tweet-User-Avatar"]')) return;
+
         mediaItems.push({
           type: "image",
           element: img,
@@ -110,14 +114,36 @@ function getTweetContent(tweet) {
     return null;
   }
 }
+function getMediaItemUrl(mediaItem) {
+  try {
+    const element = mediaItem.element || mediaItem.container;
+
+    // Find the closest anchor tag wrapping this media
+    const link = element.closest("a");
+
+    if (link && link.href) {
+      if (link.href.includes("/status/")) {
+        const urlObj = new URL(link.href);
+        const match = urlObj.pathname.match(/(\/[^\/]+\/status\/\d+)/);
+        if (match) {
+          return urlObj.origin + match[1];
+        }
+      }
+    }
+  } catch (e) {
+    // Fallback to null if anything fails
+    return null;
+  }
+  return null;
+}
 
 function processTweet(tweet) {
   const tweetUser = getTweetUser(tweet);
-  const tweetUrl = getTweetURL(tweet);
+  const mainTweetUrl = getTweetURL(tweet); // This is the container tweet's URL
   const mediaItems = getTweetMedia(tweet);
   let tweetContent = getTweetContent(tweet);
 
-  if (tweetUser && tweetUrl && mediaItems && mediaItems.length > 0) {
+  if (tweetUser && mainTweetUrl && mediaItems && mediaItems.length > 0) {
     tweetContent = tweetContent
       ? `${tweetContent} \n by ${tweetUser}`
       : `by ${tweetUser}`;
@@ -127,23 +153,27 @@ function processTweet(tweet) {
       button.classList.add("floating-button");
       button.innerText = "Pin";
       button.style.opacity = 0;
-      button.style.zIndex = "9999"; // Ik it's silly having this button at 9999, but like I'm not bothering myself by checking
+      button.style.zIndex = "9999";
 
       button.addEventListener("click", (event) => {
         event.preventDefault();
-        event.stopPropagation(); // Stop propagation for both types
+        event.stopPropagation();
+
+        const specificUrl = getMediaItemUrl(item);
+        const pinUrl = specificUrl || mainTweetUrl;
+
         const pinData = {
-          url: tweetUrl,
+          url: pinUrl,
           media: item.src,
           description: tweetContent,
         };
+
         if (index === 0) {
           pinFirst(pinData.url, pinData.description);
         } else {
           pinNext(pinData.url, pinData.media, pinData.description);
         }
       });
-
 
       // Videos and gifs
       if (item.type === "video") {
@@ -162,6 +192,9 @@ function processTweet(tweet) {
       // Original Images
       else if (item.type === "image") {
         const image = item.element;
+        // Safety check to ensure we have a valid structure
+        if (!image.parentNode || !image.parentNode.parentNode) return;
+
         const grandparent = image.parentNode.parentNode;
 
         if (grandparent.querySelector(".floating-button")) return;
@@ -187,7 +220,6 @@ function processTweet(tweet) {
     });
   }
 }
-
 function observeTweets() {
   const tweetElements = document.querySelectorAll(
     "article[data-testid='tweet']"
